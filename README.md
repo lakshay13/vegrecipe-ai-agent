@@ -8,7 +8,7 @@
 
 ## 📸 Screenshots
 
-![VegRecipe Web App](screenshots/app_full.png)
+![VegRecipe Web App](screenshots/app.png)
 
 ---
 
