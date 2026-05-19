@@ -6,6 +6,12 @@
 
 ---
 
+## 📸 Screenshots
+
+![VegRecipe Web App](screenshots/app_full.png)
+
+---
+
 ## ✨ Features
 
 - **1125 vegetarian recipes** — Indian (North, South, Kerala, Indo-Chinese), Italian, Spanish, French, Chinese, Fusion, and more
