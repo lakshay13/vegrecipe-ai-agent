@@ -17,15 +17,6 @@
 
 ---
 
-## 📸 Screenshots
-
-| Today's Recipe | Browse Recipes | Shopping List |
-|---|---|---|
-| ![Daily Recipe](https://via.placeholder.com/400x250?text=Daily+Recipe+View) | ![Browse](https://via.placeholder.com/400x250?text=Browse+Recipes) | ![Shopping](https://via.placeholder.com/400x250?text=Shopping+List) |
-
-| Surprise Me | Shops Guide |
-|---|---|
-| ![Surprise](https://via.placeholder.com/400x250?text=Surprise+Me) | ![Shops](https://via.placeholder.com/400x250?text=Shops+Guide) |
 
 ---
 
