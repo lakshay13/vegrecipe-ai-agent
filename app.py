@@ -154,18 +154,29 @@ with tab4:
 
 with tab5:
     st.subheader("🔎 What's in My Fridge?")
-    st.markdown("Tell me what ingredients you have, and I'll suggest recipes you can make!")
 
-    user_ings = st.text_input("Enter your ingredients (separated by spaces or commas)", placeholder="e.g. chickpeas spinach onion tomato garlic")
-    top_n = st.slider("Number of suggestions", 3, 20, 8)
+    if "fridge_ings" not in st.session_state:
+        st.session_state.fridge_ings = ""
+    if "fridge_searched" not in st.session_state:
+        st.session_state.fridge_searched = False
 
-    if user_ings:
-        results = engine.find_recipes_by_ingredients(user_ings)
+    col_in, col_btn = st.columns([4, 1])
+    with col_in:
+        user_ings = st.text_input("What ingredients do you have?", placeholder="e.g. chickpeas spinach onion tomato garlic", label_visibility="collapsed")
+    with col_btn:
+        top_n = 8
+        if st.button("🔎 Suggest Recipes", type="primary", use_container_width=True):
+            st.session_state.fridge_ings = user_ings
+            st.session_state.fridge_searched = True
+            st.rerun()
+
+    if st.session_state.fridge_searched and st.session_state.fridge_ings:
+        results = engine.find_recipes_by_ingredients(st.session_state.fridge_ings)
         if not results:
             st.warning("No recipes found with those ingredients. Try adding more common items like onion, garlic, tomato, rice.")
         else:
             st.success(f"Found {len(results)} matching recipes!")
-            for i, (score, matches, recipe) in enumerate(results[:top_n]):
+            for i, (score, matches, recipe) in enumerate(results[:8]):
                 match_pct = int(score * 100)
                 with st.container(border=True):
                     cols = st.columns([1, 3, 1])
@@ -173,7 +184,7 @@ with tab5:
                         st.markdown(f"### {recipe['id']}")
                     with cols[1]:
                         st.markdown(f"**{recipe['name']}**  \n{recipe['cuisine']} | {recipe['meal_type']} | ⏱ {recipe['prep_time']} + {recipe['cook_time']}")
-                        st.markdown(f"**Ingredients you have:** {', '.join(recipe['ingredients'])}")
+                        st.markdown(f"**Ingredients:** {', '.join(recipe['ingredients'])}")
                     with cols[2]:
                         st.markdown(f"**{match_pct}%** match")
                         st.progress(min(match_pct, 100))
@@ -182,7 +193,7 @@ with tab5:
                             st.session_state.recipe_source = "fridge"
                             st.rerun()
     else:
-        st.info("Try: `chickpeas spinach onion tomato garlic` or `paneer spinach cream` or `lentils rice carrot`")
+        st.info("Type ingredients above and click **Suggest Recipes**.\n\nExamples:\n- `chickpeas spinach onion tomato garlic`\n- `paneer spinach cream butter`\n- `lentils rice carrot coconut`")
 
 st.sidebar.markdown("## 🥗 VegRecipe AI Agent")
 st.sidebar.markdown("Your daily vegetarian recipe companion for **A Coruña, Galicia**.")
