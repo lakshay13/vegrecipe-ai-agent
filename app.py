@@ -71,7 +71,7 @@ with col_right:
         st.session_state.recipe_source = "random"
         st.rerun()
 
-tab1, tab2, tab3, tab4 = st.tabs(["🍽️ Recipe", "🔍 Browse Recipes", "📋 All Recipes", "🏪 Shops Guide"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["🍽️ Recipe", "🔍 Browse Recipes", "📋 All Recipes", "🏪 Shops Guide", "🔎 What's in My Fridge?"])
 
 with tab1:
     show_recipe(st.session_state.recipe, st.session_state.recipe_source)
@@ -151,6 +151,38 @@ with tab4:
                 with st.expander("What they sell"):
                     for s in sorted(set(shop['sells'])):
                         st.markdown(f"- {s}")
+
+with tab5:
+    st.subheader("🔎 What's in My Fridge?")
+    st.markdown("Tell me what ingredients you have, and I'll suggest recipes you can make!")
+
+    user_ings = st.text_input("Enter your ingredients (separated by spaces or commas)", placeholder="e.g. chickpeas spinach onion tomato garlic")
+    top_n = st.slider("Number of suggestions", 3, 20, 8)
+
+    if user_ings:
+        results = engine.find_recipes_by_ingredients(user_ings)
+        if not results:
+            st.warning("No recipes found with those ingredients. Try adding more common items like onion, garlic, tomato, rice.")
+        else:
+            st.success(f"Found {len(results)} matching recipes!")
+            for i, (score, matches, recipe) in enumerate(results[:top_n]):
+                match_pct = int(score * 100)
+                with st.container(border=True):
+                    cols = st.columns([1, 3, 1])
+                    with cols[0]:
+                        st.markdown(f"### {recipe['id']}")
+                    with cols[1]:
+                        st.markdown(f"**{recipe['name']}**  \n{recipe['cuisine']} | {recipe['meal_type']} | ⏱ {recipe['prep_time']} + {recipe['cook_time']}")
+                        st.markdown(f"**Ingredients you have:** {', '.join(recipe['ingredients'])}")
+                    with cols[2]:
+                        st.markdown(f"**{match_pct}%** match")
+                        st.progress(min(match_pct, 100))
+                        if st.button("View Recipe", key=f"fridge_view_{recipe['id']}"):
+                            st.session_state.recipe = recipe
+                            st.session_state.recipe_source = "fridge"
+                            st.rerun()
+    else:
+        st.info("Try: `chickpeas spinach onion tomato garlic` or `paneer spinach cream` or `lentils rice carrot`")
 
 st.sidebar.markdown("## 🥗 VegRecipe AI Agent")
 st.sidebar.markdown("Your daily vegetarian recipe companion for **A Coruña, Galicia**.")

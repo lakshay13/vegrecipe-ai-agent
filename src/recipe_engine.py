@@ -65,6 +65,19 @@ class RecipeEngine:
             })
         return shopping
 
+    def find_recipes_by_ingredients(self, user_input):
+        raw_ings = [i.strip().lower() for i in user_input.replace(",", " ").split() if i.strip()]
+        scored = []
+        for r in self.recipes:
+            r_ings_lower = [i.lower() for i in r["ingredients"]]
+            matches = sum(1 for ui in raw_ings if any(ui in ri for ri in r_ings_lower))
+            if matches == 0:
+                continue
+            score = matches / max(len(r_ings_lower), 1)
+            scored.append((score, matches, r))
+        scored.sort(key=lambda x: (-x[0], -x[1]))
+        return scored
+
     def get_all_cuisines(self):
         cuisines = set()
         for r in self.recipes:

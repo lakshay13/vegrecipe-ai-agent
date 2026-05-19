@@ -69,6 +69,21 @@ def main():
             if count > 1:
                 print(f"Showing {count} random recipes (use a number to get more, e.g. 'random 5')")
 
+        elif cmd == "with" or cmd == "by-ingredients":
+            if len(sys.argv) > 2:
+                user_input = " ".join(sys.argv[2:])
+                results = engine.find_recipes_by_ingredients(user_input)
+                if not results:
+                    print("No recipes found with those ingredients.")
+                else:
+                    print(f"\nFound {len(results)} matching recipes:\n")
+                    for i, (score, matches, recipe) in enumerate(results[:15], 1):
+                        match_pct = int(score * 100)
+                        print(f"{i:>2}. #{recipe['id']:>4} {recipe['name']:<40} {match_pct:>2}% match")
+                    print("\nUse `python main.py show <id>` to see full details.")
+            else:
+                print("Usage: python main.py with chickpeas spinach onion tomato")
+
         elif cmd == "date":
             if len(sys.argv) > 2:
                 try:
@@ -106,6 +121,8 @@ Usage:
   python main.py random [n]       Show random recipe(s) (e.g. random 3)
   python main.py cuisines         List available cuisines
   python main.py by-cuisine <c>   List recipes by cuisine
+  python main.py with <ings>      Find recipes by ingredients you have
+                                   e.g. python main.py with chickpeas spinach onion
 """)
 
 if __name__ == "__main__":
